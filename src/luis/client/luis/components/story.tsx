@@ -7,12 +7,12 @@ import { toJS } from 'mobx';
 import { stories, changeStory } from '../louis';
 import { StoryGroupView, menu } from './story_group';
 import * as SplitPane from 'react-split-pane';
-import * as Tabs from 'react-simpletabs';
 import * as marked from 'marked';
 import { Story } from '../state/story';
 import { RouteState } from '../state/state';
 
 import { MonacoEditor } from './editor';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 require('./highlighter');
 
@@ -213,7 +213,6 @@ export const StoryTestsTitle = observer(({ testsRoot, story, state }: StoriesTit
 export interface StoriesParams {
   story: Story;
   testsRoot: Object;
-  title: any;
   state: RouteState;
 }
 
@@ -341,7 +340,6 @@ export class Snapshots extends React.PureComponent<SnapshotsProps, {}> {
 };
 
 export interface PreviewProps {
-  title: string;
   story: Story;
 }
 
@@ -462,16 +460,33 @@ export const StoriesView = observer(({ state }: Props) => {
             <RenderStory />
           </div>
           <div className={tabs}>
-            <Tabs tabActive={state.activeTab} onAfterChange={(index) => state.activeTab = index}>
+            <Tabs>
+              <TabList>
+                <Tab>Info</Tab>
+                <Tab>Actions</Tab>
+                <Tab>{testsRoot ? <StoryTestsTitle state={state} testsRoot={testsRoot} story={story} /> : 'Story Tests'}</Tab>
+                <Tab><AllTestsTitle state={state} /></Tab>
+                {story && story.snapshots.length && <Tab><SnapshotsTitle story={story} /></Tab>}
+                <Tab>Snapshots HTML</Tab>
+              </TabList>
+              <TabPanel>
               <div title="Info" className={bottomTabPane}>
                 {story && <div dangerouslySetInnerHTML={{ __html: marked(story.info || 'No Info') }}></div>}
               </div>
+              </TabPanel>
+              <TabPanel>
               <Actions title="Actions" story={story} />
-              <StoryTests state={state} title={testsRoot ? <StoryTestsTitle state={state} testsRoot={testsRoot} story={story} /> : 'Story Tests'} story={story} testsRoot={testsRoot} />
-              <AllTests state={state} title={<AllTestsTitle state={state} />} />
-              {story && story.snapshots.length &&
-                <Snapshots title={<SnapshotsTitle story={story} />} story={story} />}
-              <Previews title="Snapshots HTML" story={story} />
+              </TabPanel>
+              <TabPanel>
+                <StoryTests state={state} story={story} testsRoot={testsRoot} />
+              </TabPanel>
+              <TabPanel>
+                <AllTests state={state}  />
+              </TabPanel>             
+              {story && story.snapshots.length && <TabPanel><Snapshots story={story} />} story={story} /></TabPanel>}
+              <TabPanel>
+                <Previews story={story} />
+              </TabPanel>
             </Tabs>
           </div>
         </SplitPane>

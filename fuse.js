@@ -7,7 +7,7 @@ const {
 const fuse = FuseBox.init({
   homeDir: "src",
   output: "dist/$name.js",
-  plugins : [
+  plugins: [
     JSONPlugin()
   ]
 });
@@ -26,9 +26,14 @@ Sparky.task("luis", () => {
   const luisFuse = FuseBox.init({
     homeDir: "src",
     output: "dist/luis/$name.js",
-    plugins : [
+    plugins: [
       JSONPlugin()
-    ]
+    ],
+    shim: {
+      "crypto": {
+        exports: "{ randomBytes: () => crypto.getRandomValues(new global.Uint16Array(1))[0] }"
+      }
+    },
   });
 
   luisFuse.dev({
@@ -43,12 +48,19 @@ Sparky.task("luis", () => {
     // launch and restart express
     .completed(proc => proc.start())
 
+  luisFuse.bundle("vendor")
+    // Watching (to add dependencies) it's damn fast anyway
+    //.watch()
+    // first bundle will get HMR related code injected
+    // it will notify as well
+    .hmr()
+    .instructions(" ~ luis/client/client.ts") // nothing has changed here
 
   luisFuse.bundle("client")
-    .watch("client/**") // watch only client related code
+    .watch() // watch only client related code
     .hmr()
     .sourceMaps(true)
-    .instructions(" > luis/client/client.ts");
+    .instructions(" !> [luis/client/client.ts]");
 
   luisFuse.run();
 });

@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { style } from 'typestyle';
 
-const PropTypes = React.PropTypes;
-
 // let index = 0;
 const css = style({
   $nest: {
@@ -22,7 +20,7 @@ export interface Props {
   activeEditor?: string;
   className?: string;
   defaultValue?: string;
-  editorDidMount?: (editor: Editor, monaco: any) => void;
+  editorDidMount?: (editor: any, monaco: any) => void;
   editorWillMount?: (monaco: any) => void;
   glyphMargin?: boolean;
   width?: string | number;
@@ -99,7 +97,7 @@ export class MonacoEditor extends React.Component<Props, State> {
   afterViewInit() {
     const { requireConfig } = this.props;
     const loaderUrl = requireConfig.url || 'vs/loader.js';
-    const context = window;
+    const context: any = window;
     const onGotAmdLoader = () => {
       if (context.__REACT_MONACO_EDITOR_LOADER_ISPENDING__) {
         // Do not use webpack
@@ -198,26 +196,6 @@ export class MonacoEditor extends React.Component<Props, State> {
     );
   }
 }
-
-MonacoEditor.propTypes = {
-  width: PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number,
-  ]),
-  height: PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number,
-  ]),
-  value: PropTypes.string,
-  defaultValue: PropTypes.string,
-  language: PropTypes.string,
-  theme: PropTypes.string,
-  options: PropTypes.object,
-  editorDidMount: PropTypes.func,
-  editorWillMount: PropTypes.func,
-  onChange: PropTypes.func,
-  requireConfig: PropTypes.object
-};
 
 function noop() {/**/ }
 

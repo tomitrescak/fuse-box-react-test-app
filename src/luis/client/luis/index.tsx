@@ -13,9 +13,9 @@ export function render(root = 'react-root') {
     , getRootNode(root));
 }
 
-import { setStatefulModules } from './hmr';
-setStatefulModules(name => {
-  // Add the things you think are stateful:
-  return /state/.test(name);
-});
+// import { setStatefulModules } from './hmr';
+// setStatefulModules(name => {
+//   // Add the things you think are stateful:
+//   return /state/.test(name);
+// });
 

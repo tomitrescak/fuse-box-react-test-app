@@ -1,22 +1,23 @@
 import 'tslib';
 import { FuseBoxTestRunner, TestConfig } from 'fuse-test-runner';
 
-global.$_stubs_$ = {};
+var myGlobal: any = global;
+myGlobal.$_stubs_$ = {};
 function proxyRequire(require, path) {
   let parts = path.split('/');
   let el = parts[parts.length - 1];
-  return global.$_stubs_$[el] || require(path);
+  return myGlobal.$_stubs_$[el] || require(path);
 };
-global.proxyRequire = proxyRequire;
+myGlobal.proxyRequire = proxyRequire;
 
-global.jest = {
+myGlobal.jest = {
   mock(path, impl) {
     let parts = path.split('/');
-    global.$_stubs_$[parts[parts.length - 1]] = impl();
+    myGlobal.$_stubs_$[parts[parts.length - 1]] = impl();
   },
   unmock(path) {
     let parts = path.split('/');
-    global.$_stubs_$[parts[parts.length - 1]] = null;
+    myGlobal.$_stubs_$[parts[parts.length - 1]] = null;
   }
 };
 
@@ -119,5 +120,5 @@ class Reporter {
 var runner = new FuseBoxTestRunner({ reporter: Reporter });
 runner.startTests(tests);
 
-// import { render } from './luis/index';
-// render();
+import { render } from './luis/index';
+render();

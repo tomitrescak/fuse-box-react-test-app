@@ -15,6 +15,6 @@ export class BarTest {
         //     .mutate((bar: Bar) => bar.name)
         //     .equal("I am bar")
         should(1).matchSnapshot();
-        should(12).matchSnapshot();
+        should(10).matchSnapshot();
     }
 }

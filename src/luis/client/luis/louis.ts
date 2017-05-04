@@ -51,12 +51,6 @@ export class StoryGroup {
   addWithInfo(storyName: string, info: string, component: Function) {
     const story = new Story(storyName, info, component, this.decorator);
 
-    // add reference if we want to re-run tests
-    story.tests = () => tests.runAsync(this, story);
-
-    // run test now
-    story.tests();
-
     this.stories.push(story);
     return this;
   }
@@ -76,24 +70,11 @@ let parentGroup: StoryGroup = new StoryGroup('List of UIS');
 let currentGroup: StoryGroup = parentGroup;
 let currentStory: Story;
 
-///////////////////////////////
-// legacy functionality
-
-function storiesOf(name: string) {
-  let storyGroup = parentGroup.storyGroups.find(s => s.name === name);
-
-  if (!storyGroup) {
-    storyGroup = new StoryGroup(name, parentGroup);
-    parentGroup.addGroup(storyGroup);
-  }
-
-  return storyGroup;
-}
 
 ///////////////////////////////
 // new functionality
 
-export function describe(storyName, func) {
+export function describe(storyName) {
 
   // add to stories
   let storyGroup = currentGroup.storyGroups.find(s => s.name === storyName);
@@ -103,10 +84,6 @@ export function describe(storyName, func) {
     currentGroup.addGroup(storyGroup);
   }
   currentGroup = storyGroup;
-
-  func.call(storyGroup);
-  tests.callAfter();
-
   currentGroup = currentGroup.parent;
   // currentGroup.storyGroups.sort((a, b) => a.name < b.name ? -1 : 1);
 };
@@ -121,30 +98,10 @@ export function story(storyName: string, info: string | Function, component?: Fu
   currentGroup.stories.push(story);
 
   const runGroup = currentGroup;
-
-  // add reference if we want to re-run tests
-  story.tests = () => tests.runAsync(runGroup, story);
-  story.tests();
 }
 
 export function decorator(decorator: any) {
   currentGroup.decorator = decorator;
-}
-
-function action(actionName: string, impl?: Function) {
-  return (...params: any[]) => {
-    if (tests.isTestMode()) {
-      return;
-    }
-    if (console.group) {
-      console.group(`Action: ${actionName}`);
-      // tslint:disable-next-line:no-console
-      console.log(params);
-      console.groupEnd();
-    }
-    if (impl) { impl(); }
-    (state.viewedStory || currentStory).actions.push(`${actionName} (${params.map(p => p && p.target ? 'event' : JSON.stringify(p || 'null')).join(', ')})`);
-  };
 }
 
 export function changeStory(story: Story) {
@@ -156,32 +113,6 @@ export function stories(state: { runningTests: boolean }) {
     // setTimeout
   }
   return parentGroup;
-}
-
-export function registerTestGlobals() {
-  global.tests = tests.tests;
-  global.describe = describe;
-  global.xdescribe = tests.xdescribe;
-  global.it = tests.it;
-  global.xit = tests.xit;
-  global.before = tests.before;
-  global.beforeAll = tests.before;
-  global.afterAll = tests.after;
-  global.after = tests.after;
-  global.beforeEach = tests.beforeEach;
-  global.afterEach = tests.afterEach;
-}
-
-export function registerStoryGlobals() {
-  global.storiesOf = storiesOf;
-  global.action = action;
-  global.decorator = decorator;
-  global.story = story;
-}
-
-export function registerGlobals() {
-  registerStoryGlobals();
-  registerTestGlobals();
 }
 
 

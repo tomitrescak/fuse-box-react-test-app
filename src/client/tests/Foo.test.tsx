@@ -1,13 +1,19 @@
 import { should } from 'fuse-test-runner';
 import { Foo } from '../Foo';
-
+import * as React from 'react';
 
 export class FooTest {
-    'Should be okay'() {
+    static story = 'My Story 2';
+    static folder = 'Test';
+    static component = () => (
+        <div>Foo</div>
+    );
+
+    'Should Foo be okay'() {
         should(Foo).beOkay().beObject();
     }
 
-    'Should construct Bar Object'() {
+    'Should construct Foo Object'() {
         should(new Foo())
             .beObject()
             .mutate((bar: Foo) => bar.name)

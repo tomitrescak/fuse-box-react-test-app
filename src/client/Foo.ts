@@ -1,3 +1,3 @@
 export class Foo {
-    constructor(public name: string = "I am FOO") { }
+    constructor(public name: string = 'I am FOO') { }
 }

@@ -21,7 +21,7 @@ Sparky.task("default", () => {
 });
 
 Sparky.task("test", () => {
-  fuse.bundle("app").test("[**/**.test.ts]");
+  fuse.bundle("app").test("[**/**.test.tsx]");
 });
 
 Sparky.task("luis", () => {
@@ -47,9 +47,30 @@ Sparky.task("luis", () => {
     httpServer: false
   });
 
+  // luisFuse.bundle("server")
+  //   .watch("luis/server/**") // watch only server related code.. bugs up atm
+  //   .instructions(" > [luis/server/server.ts]")
+  //   // Execute process right after bundling is completed
+  //   // launch and restart express
+  //   .completed(proc => proc.start())
+
+  // luisFuse.bundle("vendor")
+  //   // Watching (to add dependencies) it's damn fast anyway
+  //   //.watch()
+  //   // first bundle will get HMR related code injected
+  //   // it will notify as well
+  //   .hmr()
+  //   .instructions(" ~ luis/client/client.ts") // nothing has changed here
+
+  // luisFuse.bundle("client")
+  //   .watch() // watch only client related code
+  //   .hmr()
+  //   .sourceMaps(true)
+  //   .instructions(" !> [luis/client/client.ts]");
+
   luisFuse.bundle("server")
-    .watch("luis/server/**") // watch only server related code.. bugs up atm
-    .instructions(" > [luis/server/server.ts]")
+    .watch("server/**") // watch only server related code.. bugs up atm
+    .instructions(" > [server/luis.ts]")
     // Execute process right after bundling is completed
     // launch and restart express
     .completed(proc => proc.start())
@@ -60,13 +81,13 @@ Sparky.task("luis", () => {
     // first bundle will get HMR related code injected
     // it will notify as well
     .hmr()
-    .instructions(" ~ luis/client/client.ts") // nothing has changed here
+    .instructions(" ~ client/luis.ts") // nothing has changed here
 
   luisFuse.bundle("client")
     .watch() // watch only client related code
     .hmr()
     .sourceMaps(true)
-    .instructions(" !> [luis/client/client.ts]");
+    .instructions(" !> [client/luis.ts]");
 
   luisFuse.run();
 });

@@ -19,6 +19,7 @@ import { AllTestsTitle, AllTests } from './story_all_tests';
 import { Actions } from './story_actions';
 import { Previews } from './story_previews';
 import { bottomTabPane } from './story_common';
+import { SnapshotsTitle, Snapshots } from './story_snapshots';
 
 
 require('./highlighter');
@@ -227,7 +228,7 @@ export const StoriesView = observer(({ state }: Props) => {
                 <Tab>Actions</Tab>
                 <Tab><StoryTestsTitle state={state} groupPath={groupPath} story={story} /></Tab>
                 <Tab><AllTestsTitle state={state} /></Tab>
-                {/*{story && story.snapshots.length && <Tab><SnapshotsTitle story={story} /></Tab>}*/}
+                <Tab><SnapshotsTitle story={story} /></Tab>
                 <Tab>Snapshots HTML</Tab>
               </TabList>
               <TabPanel>
@@ -244,7 +245,7 @@ export const StoriesView = observer(({ state }: Props) => {
               <TabPanel>
                 <AllTests state={state} />
               </TabPanel>
-              {/*{story && story.snapshots.length && <TabPanel><Snapshots story={story} /></TabPanel>}*/}
+              <TabPanel><Snapshots story={story} /></TabPanel>
               <TabPanel>
                 <Previews story={story} />
               </TabPanel>

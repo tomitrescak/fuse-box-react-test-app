@@ -9,7 +9,7 @@ import { bottomTabPane, toolBelt } from './story_common';
 const requireConfig = {
   url: 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.1/require.min.js',
   paths: {
-    'vs': '/libs/monaco/0.8.0/vs'
+    'vs': 'https://unpkg.com/monaco-editor@0.8.3/min/vs/'
   }
 };
 
@@ -22,12 +22,17 @@ export interface SnapshotsProps {
   story: Story;
 }
 
-export const SnapshotsTitle = observer(({ story }: SnapshotsProps) => (
-  <span>Snapshots JSON [
+export const SnapshotsTitle = observer(({ story }: SnapshotsProps) => {
+  if (!story || !story.snapshots || !story.snapshots.length) {
+    return <span>No Snapshots</span>;
+  }
+  return (
+    <span>Snapshots JSON [
     <span className="pass">{story.snapshots.filter(s => s.matching).length}</span> /
     <span className="fail">{story.snapshots.filter(s => !s.matching).length}</span>]
   </span>
-));
+  );
+});
 
 function updateSnapshot(button: HTMLButtonElement, story: Story, snapshotName) {
   while (snapshotName[snapshotName.length - 1].match(/[0-9 ]/)) {
@@ -67,6 +72,11 @@ export class Snapshots extends React.PureComponent<SnapshotsProps, {}> {
 
   render() {
     const story = this.props.story;
+
+    if (!story || !story.snapshots || !story.snapshots.length) {
+      return <span>No Snapshots</span>;
+    }
+
     return (
       <div className={bottomTabPane} style={{ overflow: 'hidden' }}>
         <div className={toolBelt}>

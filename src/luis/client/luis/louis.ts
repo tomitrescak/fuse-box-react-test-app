@@ -37,28 +37,7 @@ export class StoryGroup {
     this._decorator = dec;
   }
 
-  add(storyName: string, component: Function) {
-    return this.addWithInfo(storyName, null, component);
-  }
 
-  addFolder(folderName: string) {
-    if (!this.storyGroups) { this.storyGroups = []; }
-    const folder = new StoryGroup(folderName, this);
-    this.storyGroups.push(folder);
-    return folder;
-  }
-
-  addWithInfo(storyName: string, info: string, component: Function) {
-    const story = new Story(storyName, info, component, this.decorator);
-
-    this.stories.push(story);
-    return this;
-  }
-
-  addDecorator(decorator: any) {
-    this._decorator = decorator;
-    return this;
-  }
 
   addGroup(group: StoryGroup) {
     this.storyGroups.push(group);
@@ -66,7 +45,7 @@ export class StoryGroup {
   }
 }
 
-let parentGroup: StoryGroup = new StoryGroup('List of UIS');
+export let parentGroup: StoryGroup = new StoryGroup('List of UIS');
 let currentGroup: StoryGroup = parentGroup;
 let currentStory: Story;
 
@@ -74,7 +53,7 @@ let currentStory: Story;
 ///////////////////////////////
 // new functionality
 
-export function describe(storyName) {
+export function describe(storyName, func) {
 
   // add to stories
   let storyGroup = currentGroup.storyGroups.find(s => s.name === storyName);
@@ -84,8 +63,15 @@ export function describe(storyName) {
     currentGroup.addGroup(storyGroup);
   }
   currentGroup = storyGroup;
+
+  if (func()) {
+    func();
+  }
+
   currentGroup = currentGroup.parent;
   // currentGroup.storyGroups.sort((a, b) => a.name < b.name ? -1 : 1);
+
+
 };
 
 export function story(storyName: string, info: string | Function, component?: Function) {
@@ -115,6 +101,52 @@ export function stories(state: { runningTests: boolean }) {
   return parentGroup;
 }
 
+export function findStory(testPath: string[]): Story {
+  if (!testPath) {
+    return null;
+  }
+  // find the story
+  const storyPath = [...testPath];
+  let group = parentGroup;
+  let story: Story = null;
+
+  while (storyPath.length > 1) {
+    if (storyPath.length > 2) {
+      group = group.storyGroups.find(s => s.name === storyPath[0]);
+    } else {
+      story = group.stories.find(s => s.name === storyPath[0]);
+    }
+    storyPath.shift();
+  }
+
+  return story;
+}
+
+export function findTestPath(item: any): string[] {
+  if (!item.cls || !item.cls.folder || !item.cls.story) {
+    return null;
+  }
+  return [...item.cls.folder.split('/'), item.cls.story, item.title];
+}
+
+export function process(modules: any[]) {
+  let obj = {};
+  for (let mod of modules) {
+    for (let n in mod) {
+      let cls = mod[n];
+      let name = cls.name;
+      if (!name) { continue; }
+
+      obj[name] = { [name]: cls };
+
+      // add story
+      if (cls['folder']) {
+        describe(cls['folder'], () => story(cls['story'], cls['component']));
+      }
+    }
+  }
+  return obj;
+}
 
 
 

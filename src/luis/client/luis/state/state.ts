@@ -3,6 +3,7 @@ import { observable } from 'mobx';
 import { Router } from 'yester';
 import { TestCatalogue } from './catalogue';
 import { Story } from './story';
+import { FuseBoxTestRunner } from 'fuse-test-runner';
 
 export const globalCatalogue = new TestCatalogue();
 
@@ -13,6 +14,19 @@ export class RouteState {
   viewedStory: Story = null;
   activeTab = 3;
   catalogue = globalCatalogue;
+  requests = {};
+  tests = {};
+  runner: FuseBoxTestRunner = null;
+
+  findTestRoot(groupPath: string[]) {
+    let testsRoot = this.catalogue.catalogue[groupPath[0]];
+    for (let i = 1; i < groupPath.length; i++) {
+      if (testsRoot) {
+        testsRoot = testsRoot[groupPath[i]];
+      }
+    }
+    return testsRoot;
+  }
 }
 export const state = new RouteState();
 

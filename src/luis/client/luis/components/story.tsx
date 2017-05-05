@@ -10,18 +10,18 @@ import * as SplitPane from 'react-split-pane';
 import * as marked from 'marked';
 import { Story } from '../state/story';
 import { RouteState } from '../state/state';
-
-import { MonacoEditor } from './editor';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
-require('./highlighter');
+import './main.css';
+import './rc-collapse.css';
+import { StoryTestsTitle, StoryTests } from './story_tests';
+import { AllTestsTitle, AllTests } from './story_all_tests';
+import { Actions } from './story_actions';
+import { Previews } from './story_previews';
+import { bottomTabPane } from './story_common';
 
-const requireConfig = {
-  url: 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.1/require.min.js',
-  paths: {
-    'vs': '/libs/monaco/0.8.0/vs'
-  }
-};
+
+require('./highlighter');
 
 // Synchronous highlighting with highlight.js
 marked.setOptions({
@@ -57,6 +57,7 @@ const tabs = style({
   background: 'white',
   width: '100%',
   height: '100%',
+  marginLeft: '-1px',
   $nest: {
     '& .tabs-menu': {
       display: 'table',
@@ -65,8 +66,6 @@ const tabs = style({
       margin: 0
     },
     '& .tabs-navigation': {
-      borderTop: 'solid 1px #ddd',
-      borderBottom: 'solid 1px #ddd',
     },
     '& .tabs-menu-item': {
       float: 'left',
@@ -115,7 +114,7 @@ const split = style({
     '& .Resizer.horizontal': {
       height: '11px',
       margin: '-5px 0',
-      borderTop: '5px solid rgba(255, 255, 255, 0)',
+      borderTop: '6px solid rgba(255, 255, 255, 0)',
       borderBottom: '5px solid rgba(255, 255, 255, 0)',
       cursor: 'row-resize',
       width: '100%'
@@ -141,238 +140,8 @@ const split = style({
   }
 });
 
-const bottomTabPane = style({
-  position: 'absolute',
-  top: '36px',
-  bottom: '0px',
-  overflow: 'auto',
-  left: '6px',
-  right: '6px'
-});
 
 const defaultStory = () => <div>'No story'</div>;
-const header = style({
-  marginLeft: `20px`
-});
-
-const snapshotSelect = style({
-  marginLeft: '10px'
-});
-
-const hidePassing = style({
-  float: 'right'
-});
-
-const toolBelt = style({
-  width: '100%',
-  padding: '6px'
-});
-
-const resultsHTML = style({ display: 'table', width: '100%' });
-const resultHTML = style({ display: 'table-cell', width: '50%', padding: '6px'});
-
-function renderFields(state: RouteState, current: Object) {
-  if (!current) {
-    return <div>No tests ...</div>;
-  }
-  return Object.keys(current).map((k, i) => {
-    if (typeof current[k] === 'string') {
-      return current[k] ?
-        <div key={i}><span className="fail">[FAIL] {`${k}: ${current[k]}`}</span></div> :
-        state.catalogue.hidePassing || <div key={i}><span className="pass">[PASS] {`${k}`}</span></div>;
-    } else {
-      return (
-        <div key={i}>
-          <span>{k}</span>
-          <div className={header}>
-            {renderFields(state, current[k])}
-          </div>
-        </div>
-      );
-    }
-  });
-}
-
-// Story tests
-
-export interface StoriesTitleParams {
-  testsRoot: Object;
-  state: RouteState;
-  story: Story;
-}
-
-export const StoryTestsTitle = observer(({ testsRoot, story, state }: StoriesTitleParams) => {
-  if (story.testing) {
-    return <span>Running tests ...</span>;
-  }
-  return (
-    <span>Story Tests [<span className="pass">{state.catalogue.count(testsRoot, false)}</span> / <span className="fail">{state.catalogue.count(testsRoot, true)}</span>]</span>
-  );
-});
-
-export interface StoriesParams {
-  story: Story;
-  testsRoot: Object;
-  state: RouteState;
-}
-
-export const StoryTests = observer(({ testsRoot, story, state }: StoriesParams) => (
-  <div className={bottomTabPane}>
-    <div className={hidePassing}>
-      <input type="checkbox" defaultChecked={state.catalogue.hidePassing} onChange={(e) => { state.catalogue.hidePassing = e.currentTarget.checked; }} /> Hide Passing
-    </div>
-    {story && story.testing && <span>Running tests ...</span>}
-    {renderFields(state, testsRoot)}
-  </div>
-));
-
-// All tests
-
-export interface AllTestsProps {
-  title?: any;
-  state: RouteState;
-}
-
-export const AllTestsTitle = observer(({ state }: AllTestsProps) => (
-  <span>All Tests [
-    <span className="pass">{state.catalogue.passingTests}</span> /
-    <span className="fail">{state.catalogue.failingTests}</span>]
-  </span>
-));
-
-export const AllTests = observer(({ state }: AllTestsProps) => (
-  <div className={bottomTabPane}>
-    <div className={hidePassing}>
-      <input type="checkbox" defaultChecked={state.catalogue.hidePassing} onChange={(e) => { state.catalogue.hidePassing = e.currentTarget.checked; }} /> Hide Passing
-    </div>
-    {renderFields(state, state.catalogue.catalogue)}
-  </div>
-));
-
-export interface ActionProps {
-  title: any;
-  story: Story;
-}
-export const Actions = observer(({ story }: ActionProps) => {
-  return (
-    <div className={bottomTabPane}>
-      {story && story.actions.map(a => (
-        <div>{a}</div>
-      ))}
-    </div>
-  );
-});
-
-
-export interface SnapshotsProps {
-  title?: any;
-  story: Story;
-}
-export const SnapshotsTitle = observer(({ story }: SnapshotsProps) => (
-  <span>Snapshots JSON [
-    <span className="pass">{story.snapshots.filter(s => s.matching).length}</span> /
-    <span className="fail">{story.snapshots.filter(s => !s.matching).length}</span>]
-  </span>
-));
-
-function updateSnapshot(button: HTMLButtonElement, story: Story, snapshotName) {
-  while (snapshotName[snapshotName.length - 1].match(/[0-9 ]/)) {
-    snapshotName = snapshotName.substring(0, snapshotName.length - 1);
-  }
-  button.textContent = 'Updating ...';
-  fetch(`/snapshot?snapshot=${snapshotName}&update=true`)
-    .then(function (response) {
-      return response.text();
-    })
-    .then(function () {
-      button.textContent = 'Update Snapshot';
-      // rerun tests
-      story.snapshots = [];
-      story.tests();
-    });
-}
-
-@observer
-export class Snapshots extends React.PureComponent<SnapshotsProps, {}> {
-
-  editor: monaco.editor.IStandaloneDiffEditor;
-
-  initEditor = (mountEditor: any) => {
-    this.editor = mountEditor as any;
-    this.setModel();
-  }
-
-  setModel = () => {
-    let original = monaco.editor.createModel(this.props.story.snapshots[this.props.story.activeSnapshot].current, 'text/plain');
-    let modified = monaco.editor.createModel(this.props.story.snapshots[this.props.story.activeSnapshot].expected, 'text/plain');
-    monaco.editor.setModelLanguage(original, 'json');
-    monaco.editor.setModelLanguage(modified, 'json');
-
-    this.editor.setModel({ original, modified });
-  }
-
-  render() {
-    const story = this.props.story;
-    return (
-      <div className={bottomTabPane} style={{ overflow: 'hidden' }}>
-        <div className={toolBelt}>
-          <select onChange={e => { story.activeSnapshot = parseInt(e.currentTarget.value, 10); }}>
-            {story.snapshots.map((s, i) => (
-              <option value={i} key={i}>{s.name}</option>
-            ))}
-          </select>
-          <button className={snapshotSelect} onClick={(e) => updateSnapshot(e.currentTarget, story, story.snapshots[story.activeSnapshot].name)}>Update Snapshot</button>
-        </div>
-
-
-        <MonacoEditor key="HistoryView"
-          editorDidMount={this.initEditor}
-          theme="vs-light"
-          width="100%"
-          height="100%"
-          clientValue={this.props.story.snapshots[this.props.story.activeSnapshot].current}
-          serverValue={this.props.story.snapshots[this.props.story.activeSnapshot].expected}
-          requireConfig={requireConfig}
-        />
-      </div>
-    );
-  }
-};
-
-export interface PreviewProps {
-  story: Story;
-}
-
-const Previews = observer(({ story }: PreviewProps) => {
-  const snapshot = story.snapshots[story.activeSnapshot];
-  return (
-    <div className={bottomTabPane}>
-      <div className={toolBelt}>
-        <select onChange={e => { story.activeSnapshot = parseInt(e.currentTarget.value, 10); }}>
-          {story.snapshots.map((s, i) => (
-            <option value={i} key={i}>{s.name}</option>
-          ))}
-        </select>
-      </div>
-
-      <If condition={snapshot}>
-        <div>
-          <Choose>
-            <When condition={snapshot.expected !== snapshot.current}>
-              <div className={resultsHTML}>
-                  <div className={resultHTML} dangerouslySetInnerHTML={{ __html: story.snapshots[story.activeSnapshot].current }} />
-                  <div className={resultHTML} dangerouslySetInnerHTML={{ __html: story.snapshots[story.activeSnapshot].expected }} />            
-              </div>
-            </When>
-            <Otherwise>
-              <div dangerouslySetInnerHTML={{ __html: story.snapshots[story.activeSnapshot].html }} />
-            </Otherwise>
-          </Choose>
-        </div>
-      </If>
-    </div>
-  );
-});
 
 interface Props {
   state: RouteState;
@@ -419,14 +188,6 @@ export const StoriesView = observer(({ state }: Props) => {
     RenderStory = defaultStory;
   }
 
-  // find the root in catalogue
-  let testsRoot = state.catalogue.catalogue[groupPath[0]];
-  for (let i = 1; i < groupPath.length; i++) {
-    if (testsRoot) {
-      testsRoot = testsRoot[groupPath[i]];
-    }
-  }
-
   // change to current story
   changeStory(story);
 
@@ -464,26 +225,26 @@ export const StoriesView = observer(({ state }: Props) => {
               <TabList>
                 <Tab>Info</Tab>
                 <Tab>Actions</Tab>
-                <Tab>{testsRoot ? <StoryTestsTitle state={state} testsRoot={testsRoot} story={story} /> : 'Story Tests'}</Tab>
+                <Tab><StoryTestsTitle state={state} groupPath={groupPath} story={story} /></Tab>
                 <Tab><AllTestsTitle state={state} /></Tab>
-                {story && story.snapshots.length && <Tab><SnapshotsTitle story={story} /></Tab>}
+                {/*{story && story.snapshots.length && <Tab><SnapshotsTitle story={story} /></Tab>}*/}
                 <Tab>Snapshots HTML</Tab>
               </TabList>
               <TabPanel>
-              <div title="Info" className={bottomTabPane}>
-                {story && <div dangerouslySetInnerHTML={{ __html: marked(story.info || 'No Info') }}></div>}
-              </div>
+                <div title="Info" className={bottomTabPane}>
+                  {story && <div dangerouslySetInnerHTML={{ __html: marked(story.info || 'No Info') }}></div>}
+                </div>
               </TabPanel>
               <TabPanel>
-              <Actions title="Actions" story={story} />
+                <Actions title="Actions" story={story} />
               </TabPanel>
               <TabPanel>
-                <StoryTests state={state} story={story} testsRoot={testsRoot} />
+                <StoryTests state={state} story={story} groupPath={groupPath} />
               </TabPanel>
               <TabPanel>
-                <AllTests state={state}  />
-              </TabPanel>             
-              {story && story.snapshots.length && <TabPanel><Snapshots story={story} />} story={story} /></TabPanel>}
+                <AllTests state={state} />
+              </TabPanel>
+              {/*{story && story.snapshots.length && <TabPanel><Snapshots story={story} /></TabPanel>}*/}
               <TabPanel>
                 <Previews story={story} />
               </TabPanel>

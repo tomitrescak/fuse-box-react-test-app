@@ -1,7 +1,9 @@
 const {
   Sparky,
   FuseBox,
-  JSONPlugin
+  JSONPlugin,
+  CSSPlugin,
+  CSSResourcePlugin
 } = require("fuse-box");
 
 const fuse = FuseBox.init({
@@ -27,7 +29,11 @@ Sparky.task("luis", () => {
     homeDir: "src",
     output: "dist/luis/$name.js",
     plugins: [
-      JSONPlugin()
+      JSONPlugin(),
+      CSSPlugin({
+        group: "bundle.css",
+        outFile: `dist/luis/bundle.css`
+      })
     ],
     shim: {
       "crypto": {

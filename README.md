@@ -15,7 +15,7 @@ To customise your test properties, please check the `fuse.js` file.
 
 ## Wallaby.js
 
-You can run your tests in [wallaby.js](http://wallaby js). Wallaby.js is the leading solution for javascript and typescript testing. It allows you to automatically execute your currently modified test as well as monitor your current test coverage.
+You can run your tests in [wallaby.js](https://wallabyjs.com). Wallaby.js is the leading solution for javascript and typescript testing. It allows you to automatically execute your currently modified test as well as monitor your current test coverage. All you need to do, is select `wallaby.js` as your config file and run tests.
 
 ## Browser
 

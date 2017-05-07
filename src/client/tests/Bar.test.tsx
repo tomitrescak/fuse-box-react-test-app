@@ -5,6 +5,7 @@ import { Bar as BarType } from '../Bar';
 
 import { proxy } from 'proxyrequire';
 
+// THIS HAS TO BE MOVED TO GLOBAL SETUP function !!!!
 TestConfig.snapshotDir = 'src/tests/snapshots';
 TestConfig.snapshotExtension = 'json';
 

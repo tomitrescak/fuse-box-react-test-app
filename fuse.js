@@ -6,6 +6,7 @@ const {
   CSSResourcePlugin
 } = require("fuse-box");
 const StubPlugin = require('proxyrequire').FuseBoxStubPlugin(/\.tsx?/);
+const TestConfig = require('fuse-test-runner').TestConfig;
 
 const fuse = FuseBox.init({
   homeDir: "src",
@@ -14,7 +15,9 @@ const fuse = FuseBox.init({
     StubPlugin,
     JSONPlugin()
   ],
-  globals: { "proxyrequire": "*" }
+  globals: {
+    "proxyrequire": "*"
+  }
 });
 
 
@@ -24,10 +27,31 @@ Sparky.task("default", () => {
 });
 
 Sparky.task("test", () => {
+  // init test config
+  // TestConfig.setup = () => {
+  //   console.log('!!!!!!!! Setting up ...');
+  //   var jsdom = require('jsdom').jsdom;
+
+  //   var exposedProperties = ['window', 'navigator', 'document'];
+
+  //   global.document = jsdom('');
+  //   global.window = document.defaultView;
+  //   Object.keys(document.defaultView).forEach((property) => {
+  //     if (typeof global[property] === 'undefined') {
+  //       exposedProperties.push(property);
+  //       global[property] = document.defaultView[property];
+  //     }
+  //   });
+
+  //   global.navigator = {
+  //     userAgent: 'node.js'
+  //   };
+  // }
+
   fuse.bundle("app")
     //.plugin(StubPlugin)
     //.globals({ proxyrequire: '*' })
-    .test("[**/**.test.tsx] +proxyrequire");
+    .test("[**/**.test.tsx]");
 });
 
 Sparky.task("luis", () => {
@@ -94,7 +118,9 @@ Sparky.task("luis", () => {
     .hmr()
     .sourceMaps(true)
     .plugin([StubPlugin])
-    .globals({ proxyrequire: '*' })
+    .globals({
+      proxyrequire: '*'
+    })
     .instructions(" !> [client/luis.ts]");
 
   luisFuse.run();

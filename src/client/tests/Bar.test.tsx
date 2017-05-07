@@ -15,9 +15,7 @@ const Bar = proxy(() => require('../Bar').Bar, {
 export class BarTest {
   static story = 'Bar';
   static folder = 'Test';
-  static component = () => (
-    <div>Bim Bam 6</div>
-  );
+  static component = <div>Bim Bam 6</div>;
 
   'Should Bar be okay'() {
     should(Bar).beOkay().beObject();
@@ -37,9 +35,7 @@ export class Bar2Test {
   static story = 'Bar 2';
   static folder = 'Test';
 
-  static component = () => (
-    <div>Bim Bam 3</div>
-  );
+  static component = <div>Bim Bam 3</div>;
 
   'Should Bar be okay'() {
     should(Bar).beOkay().beObject();

@@ -5,9 +5,7 @@ import * as React from 'react';
 export class FooTest {
     static story = 'My Story 2';
     static folder = 'Test/Me';
-    static component = () => (
-        <div>Foo</div>
-    );
+    static component = <div>Foo</div>;
 
     'Should Foo be okay'() {
         should(Foo).beOkay().beObject();

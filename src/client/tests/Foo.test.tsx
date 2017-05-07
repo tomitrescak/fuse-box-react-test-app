@@ -4,7 +4,7 @@ import * as React from 'react';
 
 export class FooTest {
     static story = 'My Story 2';
-    static folder = 'Test';
+    static folder = 'Test/Me';
     static component = () => (
         <div>Foo</div>
     );

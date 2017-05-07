@@ -5,13 +5,16 @@ const {
   CSSPlugin,
   CSSResourcePlugin
 } = require("fuse-box");
+const StubPlugin = require('proxyrequire').FuseBoxStubPlugin(/\.tsx?/);
 
 const fuse = FuseBox.init({
   homeDir: "src",
   output: "dist/$name.js",
   plugins: [
+    StubPlugin,
     JSONPlugin()
-  ]
+  ],
+  globals: { "proxyrequire": "*" }
 });
 
 
@@ -21,7 +24,10 @@ Sparky.task("default", () => {
 });
 
 Sparky.task("test", () => {
-  fuse.bundle("app").test("[**/**.test.tsx]");
+  fuse.bundle("app")
+    //.plugin(StubPlugin)
+    //.globals({ proxyrequire: '*' })
+    .test("[**/**.test.tsx] +proxyrequire");
 });
 
 Sparky.task("luis", () => {
@@ -87,6 +93,8 @@ Sparky.task("luis", () => {
     .watch() // watch only client related code
     .hmr()
     .sourceMaps(true)
+    .plugin([StubPlugin])
+    .globals({ proxyrequire: '*' })
     .instructions(" !> [client/luis.ts]");
 
   luisFuse.run();

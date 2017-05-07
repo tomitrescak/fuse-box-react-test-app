@@ -1,4 +1,5 @@
-const transform = require("fuse-test-runner").wallabyFuseTestLoader;
+// const transform = require("fuse-test-runner").wallabyFuseTestLoader;
+const transform = require("./transform").wallabyFuseTestLoader;
 const path = require('path');
 
 module.exports = function (wallaby) {
@@ -12,7 +13,7 @@ module.exports = function (wallaby) {
       "!src/**/*.d.ts*"
     ],
     tests: [
-      "src/**/*.test.tsx",
+      "src/**/*.test.tsx",  
       "src/**/*.test.ts",
       "src/**/snapshots/*.json",
     ],

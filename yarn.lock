@@ -1441,9 +1441,9 @@ loose-envify@^1.0.0, loose-envify@^1.1.0:
   dependencies:
     js-tokens "^3.0.0"
 
-luis@^1.0.20:
-  version "1.0.20"
-  resolved "https://registry.yarnpkg.com/luis/-/luis-1.0.20.tgz#488eb93711c14404900268f17eb78e903b5702cd"
+luis@^1.0.25:
+  version "1.0.25"
+  resolved "https://registry.yarnpkg.com/luis/-/luis-1.0.25.tgz#474dbffd9c6664ae0ab645752f2f493560a21b76"
   dependencies:
     "@types/expect" "^1.20.0"
     connect-history-api-fallback "^1.3.0"
@@ -1824,9 +1824,9 @@ proxy-addr@~1.1.3:
     forwarded "~0.1.0"
     ipaddr.js "1.3.0"
 
-proxyrequire@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/proxyrequire/-/proxyrequire-1.0.8.tgz#6b78b7b6c3663e2aab00d5fffa754caeb9dfc60e"
+proxyrequire@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/proxyrequire/-/proxyrequire-1.0.9.tgz#e2034dcdc4bebf6ea0dd61519d652165dd4ac2a5"
 
 punycode@^1.4.1:
   version "1.4.1"

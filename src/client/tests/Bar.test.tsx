@@ -1,13 +1,10 @@
 import * as React from 'react';
 
-import { should, TestConfig } from 'fuse-test-runner';
+import { should } from 'fuse-test-runner';
 import { Bar as BarType } from '../Bar';
 
 import { proxy } from 'proxyrequire';
 
-// THIS HAS TO BE MOVED TO GLOBAL SETUP function !!!!
-TestConfig.snapshotDir = 'src/tests/snapshots';
-TestConfig.snapshotExtension = 'json';
 
 const Bar = proxy(() => require('../Bar').Bar, {
   './Zar': { StubMe: 20 }

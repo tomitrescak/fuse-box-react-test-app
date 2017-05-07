@@ -26,32 +26,32 @@ Sparky.task("default", () => {
   fuse.run();
 });
 
+
 Sparky.task("test", () => {
   // init test config
-  // TestConfig.setup = () => {
-  //   console.log('!!!!!!!! Setting up ...');
-  //   var jsdom = require('jsdom').jsdom;
-
-  //   var exposedProperties = ['window', 'navigator', 'document'];
-
-  //   global.document = jsdom('');
-  //   global.window = document.defaultView;
-  //   Object.keys(document.defaultView).forEach((property) => {
-  //     if (typeof global[property] === 'undefined') {
-  //       exposedProperties.push(property);
-  //       global[property] = document.defaultView[property];
-  //     }
-  //   });
-
-  //   global.navigator = {
-  //     userAgent: 'node.js'
-  //   };
-  // }
-
   fuse.bundle("app")
     //.plugin(StubPlugin)
     //.globals({ proxyrequire: '*' })
-    .test("[**/**.test.tsx]");
+    .test("[**/**.test.tsx]", {
+      beforeAll(config) {
+        config.snapshotDir = 'src/tests/snapshots';
+        config.snapshotExtension = 'json';
+
+        var jsdom = require('jsdom').jsdom;
+
+        global.document = jsdom('');
+        global.window = document.defaultView;
+        Object.keys(document.defaultView).forEach((property) => {
+          if (typeof global[property] === 'undefined') {
+            global[property] = document.defaultView[property];
+          }
+        });
+
+        global.navigator = {
+          userAgent: 'node.js'
+        };
+      }
+    });
 });
 
 Sparky.task("luis", () => {

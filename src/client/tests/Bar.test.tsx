@@ -42,7 +42,7 @@ export class Bar2Test {
   'Should construct Bar Object'() {
     should(new Bar())
       .beObject()
-      .mutate((bar: Bar) => bar.name)
+      .mutate((bar: BarType) => bar.name)
       .equal('I am bar 20');
     should(1).matchSnapshot();
     should(12).matchSnapshot();

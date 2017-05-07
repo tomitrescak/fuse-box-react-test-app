@@ -7,6 +7,7 @@ module.exports = function (wallaby) {
 
   return {
     files: [
+      "./setup.js",
       "src/**/*.ts*",
       "!src/**/*.test.tsx",
       "!src/**/*.test.ts",
@@ -27,6 +28,9 @@ module.exports = function (wallaby) {
     env: {
       type: "node"
     },
-    testFramework: "mocha"
+    testFramework: "mocha",
+    setup: function (wallaby) {
+      require('./setup').setup();
+    }
   };
 };

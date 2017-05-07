@@ -7,6 +7,7 @@ const {
 } = require("fuse-box");
 const StubPlugin = require('proxyrequire').FuseBoxStubPlugin(/\.tsx?/);
 const TestConfig = require('fuse-test-runner').TestConfig;
+const setup = require('./setup').setup;
 
 const fuse = FuseBox.init({
   homeDir: "src",
@@ -34,22 +35,7 @@ Sparky.task("test", () => {
     //.globals({ proxyrequire: '*' })
     .test("[**/**.test.tsx]", {
       beforeAll(config) {
-        config.snapshotDir = 'src/tests/snapshots';
-        config.snapshotExtension = 'json';
-
-        var jsdom = require('jsdom').jsdom;
-
-        global.document = jsdom('');
-        global.window = document.defaultView;
-        Object.keys(document.defaultView).forEach((property) => {
-          if (typeof global[property] === 'undefined') {
-            global[property] = document.defaultView[property];
-          }
-        });
-
-        global.navigator = {
-          userAgent: 'node.js'
-        };
+        setup();
       }
     });
 });

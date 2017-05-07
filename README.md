@@ -9,7 +9,9 @@ You can run your tests in console (e.g. when using CI) using the [fuse-test-runn
 
 ```
 node fuse test
-```. To customise your test properties, please check out the `fuse.js` file.
+```
+
+To customise your test properties, please check the `fuse.js` file.
 
 ## Wallaby.js
 
@@ -30,3 +32,5 @@ node fuse luis
 ```
 
 And navigate to http://localhost:9001. Here is a screenshot from luis.
+
+![luis](https://cloud.githubusercontent.com/assets/2682705/23295353/41a809ba-fac4-11e6-8464-b8690a38aa74.gif)
